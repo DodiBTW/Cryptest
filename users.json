@@ -1,0 +1,10 @@
+[
+    {
+        "username": "user1",
+        "hashed_password": "$2y$10$e0MYzXyjpJS7Pd0RVvHwHeFupQe1r1F1F1F1F1F1F1F1F1F1F1F1F1"
+    },
+    {
+        "username": "user2",
+        "hashed_password": "$2y$10$e0MYzXyjpJS7Pd0RVvHwHeFupQe1r1F1F1F1F1F1F1F1F1F1F1F1F1"
+    }
+]
