@@ -25,7 +25,7 @@ class Model
         return date('Y-m-d H:i:s');
     }
 
-    public function get_all_prices($limit){
+    public function get_all_prices($limit= 10){
         $prices = $this->readJsonFile($this->pricesFile);
         usort($prices, function($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
@@ -33,7 +33,7 @@ class Model
         return array_slice($prices, 0, $limit);
     }
 
-    public function get_prices_by_token_id($id, $limit){
+    public function get_prices_by_token_id($id, $limit=10){
         $prices = $this->readJsonFile($this->pricesFile);
         $filtered = array_filter($prices, function($price) use ($id) {
             return $price['token_id'] == $id;
