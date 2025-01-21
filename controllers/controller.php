@@ -1,14 +1,23 @@
 <?php
-require("model.php");
+require_once("./models/model.php");
 
 function DisplayHome(){
-    require("views/home.php");
+    $model = new Model();
+    $currentPrice = $model->get_current_price(2);
+    $pricesChart = $model->get_all_prices(2);
+    require("./views/home.php");
 }
 
 function DisplayWallet(){
-    require("views/wallet.php");
+    $model = new Model();
+    if (!$model->check_login()){
+        echo "T Pa Laugine";
+    } else {
+        require("./views/wallet.php");
+    }
 }
 
 function Display404(){
-    require("views/404.php");
+    require("./views/404.php");
 }
+?>

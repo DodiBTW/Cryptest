@@ -8,12 +8,11 @@
 
    <body>
   	<h1>Le super blog de l'AVBN !</h1>
-  	<p>Derniers billets du blog :</p>
 
   	<div class="news">
-     	<br />
-     	<em><a href="#">Commentaires</a></em>
-     	</p>
+		<?php
+			echo number_format($currentPrice["price"], 1)
+		?>
   	</div>
    </body>
 </html>

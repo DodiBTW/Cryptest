@@ -1,5 +1,5 @@
 <?php
-require("controller.php");
+require("controllers/controller.php");
 
 $url = "$_SERVER[REQUEST_URI]";
 
@@ -9,10 +9,14 @@ if(isset($_GET["page"]) && !empty($_GET["page"])){
     if($page == "home"){
         DisplayHome();
     }
+    else if($page == "login"){
+        DisplayLogin();
+    }
     else if($page == "wallet"){
         DisplayWallet();
-    }   
-    else{
+    } else {
         Display404();
     }
+} else {
+    Display404();
 }
