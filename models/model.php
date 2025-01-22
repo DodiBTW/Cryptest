@@ -179,7 +179,7 @@ class Model
         $this->add_wallet_balance($username);
         return true;
     }
-    public function add_wallet_balance($user_id){
+    private function add_wallet_balance($user_id){
         $balance = $this->read_json_file($this->balanceFile);
         $balance[] = ['user_id' => $user_id, 'balance' => 1000];
         $this->write_json_file($this->balanceFile, $balance);
