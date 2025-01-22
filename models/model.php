@@ -235,8 +235,10 @@ class Model
     public function buy_token($amount, $token_name){
         session_start();
         $user_id = $_SESSION['user'];
-        $balance = get_wallet_balance();
-        $token_price = get_token_by_name($token_name)['price'];
+        $balance = $this->get_wallet_balance();
+        $token = get_token_by_name($token_name);
+        $token_price = $token['price'];
+        $token_id = $token['id'];
         $total_price = $amount * $token_price;
         if ($balance < $total_price) {
             return false;
@@ -259,7 +261,9 @@ class Model
             }
             break;
         }
-        withdraw_from_balance($total_price);
+        $this->write_json_file($this->walletsFile, $wallets);
+        $this->withdraw_from_balance($total_price);
+        $this->add_transaction($token_name, 'buy', $amount);
         return true;
     }
     public function sell_token($amount, $token_name){
@@ -275,11 +279,12 @@ class Model
             foreach ($wallet['tokens'] as $token) {
                 if ($token['token_id'] == $token_id && $token['amount'] >= $amount) {
                     $token['amount'] -= $amount;
-                    add_to_balance($total_price);
+                    $this->add_to_balance($total_price);
+                    $this->write_json_file($this->walletsFile, $wallets);
+                    $this->add_transaction($token_name, 'sell', $amount);
                     return true;
                 }
             }
-            
         }
         return false;
     }
