@@ -5,11 +5,24 @@ function DisplayHome($id)
 {
     $model = new Model();
     $currentPrice = $model->get_current_price($id);
-    $pricesChart = $model->get_all_prices(20);
+    $pricesChart = $model->get_prices_by_token_id($id);
     $token = $model->get_token_by_id($id);
 
-    $chartLabels = ["10:00", "11:00", "12:00", "13:00", "14:00"];
-    $chartValues = [100, 102, 101, 105, 110];
+    $labels = [];
+    $values = []; 
+
+    foreach ($pricesChart as &$priceChart) {
+        $dateTime = new DateTime($priceChart["date"]);
+        $heure = $dateTime->format('H:i');
+        
+        $labels[] = $heure;
+        $values[] = $priceChart["price"];
+    }
+
+    var_dump($labels);
+
+    $chartLabels = $labels;
+    $chartValues = $values;
 
     require("./views/home.php");
 }
