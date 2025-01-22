@@ -1,7 +1,7 @@
 <?php
 require_once("./models/model.php");
 
-function DisplayHome($id)
+function DisplayHome($id,$limit)
 {
     $model = new Model();
     $currentPrice = $model->get_current_price($id);
@@ -10,17 +10,24 @@ function DisplayHome($id)
 
     $labels = [];
     $values = []; 
+    $counter = 0;
 
     foreach ($pricesChart as &$priceChart) {
+
+        if ($counter >= $limit) {
+            break;
+        }
+
         $dateTime = new DateTime($priceChart["date"]);
         $heure = $dateTime->format('H:i');
         
         $labels[] = $heure;
         $values[] = $priceChart["price"];
+        $counter++;
     }
 
-    $chartLabels = $labels;
-    $chartValues = $values;
+    $chartLabels = array_reverse($labels);
+    $chartValues = array_reverse($values);
 
     require("./views/home.php");
 }
