@@ -269,7 +269,7 @@ class Model
     public function sell_token($amount, $token_name){
         session_start();
         $user_id = $_SESSION['user'];
-        $token = get_token_by_name($token_name);
+        $token = $this->get_token_by_name($token_name);
         $token_price = $token['price'];
         $token_id = $token['id'];
         $total_price = $amount * $token_price;
