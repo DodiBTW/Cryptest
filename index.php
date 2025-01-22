@@ -8,15 +8,15 @@ if(isset($_GET["page"]) && !empty($_GET["page"])){
 
     if($page == "home"){
         DisplayHome();
-    }
-    else if($page == "login"){
+    } else if($page == "login"){
         DisplayLogin();
-    }
-    else if($page == "wallet"){
+    } else if($page == "wallet"){
         DisplayWallet();
+    } else if($page == "cryptocurrencies"){
+        DisplayCrypto();
     } else {
         Display404();
     }
 } else {
-    Display404();
+    DisplayHome();
 }

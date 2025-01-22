@@ -1,17 +1,24 @@
 import requests
 import time
 import json
+from datetime import datetime
 
-with open('tokens.json', 'r') as file:
+with open('db/tokens.json', 'r') as file:
     data = json.load(file)
 
 tokens = [[item['id'], item['address']] for item in data]
 
-with open('prices.json', 'a') as file:
-    while True:
-        time.sleep(600)
+while True:
+    with open('db/prices.json', 'r') as file:
+        
+        try:
+            data = json.load(file)
+        except json.JSONDecodeError:
+            data = []
+
+        time.sleep(6)
         for token in tokens:
-            print(token)
+            
             uri = "https://api.dexscreener.com/latest/dex/tokens/"+ token[1]
             headers = {}
             response = requests.get(
@@ -19,5 +26,22 @@ with open('prices.json', 'a') as file:
             )
 
             if response.status_code == 200:
-                data = response.json()
-            print(data['pairs'][0]['priceUsd'])
+                response = response.json()
+                
+            price = response['pairs'][0]['priceUsd']
+            
+            token_id = str(time.time()).replace('.','')
+            
+            new_price = {
+                "id": int(token_id),
+                "token_id": token[0],
+                "date": datetime.now().isoformat(),
+                "price": price
+            }
+            
+            print(data)
+            data.append(new_price)
+            print(data)
+
+            with open('db/prices.json', 'w') as output:
+                json.dump(data, output, indent=4)
