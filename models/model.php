@@ -7,7 +7,7 @@ class Model
     private $tokensFile = './db/tokens.json';
     private $transactionsFile = './db/transactions.json';
     private $usersFile = './db/users.json';
-
+    private $balanceFile = './db/balance.json';
     private function read_json_file($file) {
         if (!file_exists($file)) {
             return [];
@@ -176,7 +176,111 @@ class Model
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $users[] = ['username' => $username, 'hashed_password' => $hashed_password];
         $this->write_json_file($this->usersFile, $users);
+        $this->add_wallet_balance($username);
         return true;
+    }
+    public function add_wallet_balance($user_id){
+        $balance = $this->read_json_file($this->balanceFile);
+        $balance[] = ['user_id' => $user_id, 'balance' => 1000];
+        $this->write_json_file($this->balanceFile, $balance);
+    }
+    private function add_transaction($token_name, $type, $amount){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $random_id = rand(100000, 999999);
+        $token_id = get_token_by_name($token_name)['id'];
+        $date = get_date_now();
+        $transactions = $this->read_json_file($this->transactionsFile);
+        $transactions[] = ['id' => $random_id, 'token_id' => $token_id, 'wallet_id' => $user_id, 'date' => $date, 'amount' => $amount, 'type' => $type];
+        $this->write_json_file($this->transactionsFile, $transactions);
+    }
+    public function get_wallet_balance(){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $balance = $this->read_json_file($this->balanceFile);
+        foreach ($balance as $bal) {
+            if ($bal['user_id'] == $user_id) {
+                return $bal['balance'];
+            }
+        }
+        return null;
+    }
+    public function add_to_balance(){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $balance = $this->read_json_file($this->balanceFile);
+        foreach ($balance as $bal) {
+            if ($bal['user_id'] == $user_id) {
+                $bal['balance'] += 1000;
+                $this->write_json_file($this->balanceFile, $balance);
+                return $bal['balance'];
+            }
+        }
+        return null;
+    }
+    private function withdraw_from_balance($amount){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $balance = $this->read_json_file($this->balanceFile);
+        foreach ($balance as $bal) {
+            if ($bal['user_id'] == $user_id) {
+                $bal['balance'] -= $amount;
+                $this->write_json_file($this->balanceFile, $balance);
+                return $bal['balance'];
+            }
+        }
+        return null;
+    }
+    public function buy_token($amount, $token_name){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $balance = get_wallet_balance();
+        $token_price = get_token_by_name($token_name)['price'];
+        $total_price = $amount * $token_price;
+        if ($balance < $total_price) {
+            return false;
+        }
+        $wallets = $this->read_json_file($this->walletsFile);
+        $found = false;
+        foreach ($wallets as $wallet) {
+            if ($wallet['user_id'] == $user_id) {
+                foreach ($wallet['tokens'] as $token) {
+                    if ($token['token_id'] == $token_id) {
+                        $token['amount'] += $amount;
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $wallet['tokens'][] = ['token_id' => $token_id, 'amount' => $amount];
+                }
+                break;
+            }
+        }
+        withdraw_from_balance($total_price);
+        return true;
+    }
+    public function sell_token($amount, $token_name){
+        session_start();
+        $user_id = $_SESSION['user'];
+        $token_price = get_token_by_name($token_name)['price'];
+        $total_price = $amount * $token_price;
+        $wallets = $this->read_json_file($this->walletsFile);
+        foreach ($wallets as $wallet) {
+            if ($wallet['user_id'] == $user_id) {
+                foreach ($wallet['tokens'] as $token) {
+                    if ($token['token_id'] == $token_id) {
+                        if ($token['amount'] < $amount) {
+                            return false;
+                        }
+                        $token['amount'] -= $amount;
+                        add_to_balance($total_price);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
 ?>
