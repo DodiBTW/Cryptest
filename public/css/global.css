@@ -78,10 +78,10 @@ body {
     margin: 0;
     background-color: #101010;
     color: #fff;
-    display: block;
+    display: block; /* Modifié pour utiliser flex */
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh; /* Utiliser min-height pour éviter des problèmes de hauteur */
 }
 
 .container1 {
@@ -91,6 +91,7 @@ body {
     padding: 20px;
     background-color: #1e1e1e;
     border-radius: 10px;
+    max-width: 1200px; /* Optionnel : Limiter la largeur maximale */
 }
 
 /* Left Chart Section */
@@ -126,6 +127,7 @@ body {
     margin-left: 5px;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .time-options button:hover {
@@ -145,6 +147,7 @@ body {
 /* Right Swap Section */
 .swap-section {
     background-color: #292929;
+    justify-content: space-between;
     border-radius: 10px;
     padding: 20px;
     width: 35%;
@@ -164,9 +167,10 @@ body {
 .swap-box {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px; /* Augmenté pour espacer le swap-input et position-action-container */
 }
 
+/* Swap Input */
 .swap-input {
     display: flex;
     flex-direction: column;
@@ -197,27 +201,128 @@ body {
     width: 70%;
 }
 
-.swap-arrow {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #4caf50;
+/* Position Selector */
+.position-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.toggle-switch {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.toggle-switch input[type="radio"] {
+    display: none;
+}
+
+.toggle-switch .toggle-label {
+    padding: 8px 16px;
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    user-select: none;
+}
+
+
+.toggle-switch .toggle-label1 {
+    padding: 8px 16px;
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    user-select: none;
+}
+
+.toggle-switch .toggle-label:hover {
+    background-color: #555;
+}
+
+.toggle-switch input[type="radio"]:checked + .toggle-label {
+    background-color: #4caf50;
+    color: #fff;
+    border-color: #4caf50;
+}
+
+.toggle-switch input[type="radio"]:checked + .toggle-label1 {
+    background-color: #e71f1f;
+    color: #fff;
+    border-color: #d62929;
+}
+
+.swap-options {
+    margin-top: 30px
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 10px;
 }
 
 .swap-button {
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
+    flex: 1;
     padding: 10px;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     text-transform: uppercase;
+    transition: background-color 0.3s;
 }
 
-.swap-button:hover {
+.buy-button {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.buy-button:hover {
     background-color: #66bb6a;
 }
 
+.sell-button {
+    background-color: #f44336; /* Rouge pour Vendre */
+    color: #fff;
+}
+
+.sell-button:hover {
+    background-color: #e53935;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container1 {
+        flex-direction: column;
+        margin: 20px;
+    }
+
+    .chart-section, .swap-section {
+        width: 100%;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .toggle-switch {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+
+
+
+
+/* Crypto */
 .container2 {
  margin: 60px;
 }

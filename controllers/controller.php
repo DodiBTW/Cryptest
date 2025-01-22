@@ -19,8 +19,6 @@ function DisplayHome($id)
         $values[] = $priceChart["price"];
     }
 
-    var_dump($labels);
-
     $chartLabels = $labels;
     $chartValues = $values;
 
@@ -31,7 +29,7 @@ function DisplayWallet()
 {
     $model = new Model();
     if (!$model->check_login()) {
-        echo "T Pa Laugine";
+        echo "Vous devez être connecté";
     } else {
         require("./views/wallet.php");
     }

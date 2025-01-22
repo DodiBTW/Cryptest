@@ -25,7 +25,7 @@ include 'views/layouts/header.php';
 <div class="container1">
     <div class="chart-section">
         <div class="chart-header">
-            <span class="pair"><?php echo htmlspecialchars($token['name'])?></span>
+            <span class="pair"><?php echo htmlspecialchars($token['name']) ?></span>
             <div class="time-options">
                 <button id="15m">15m</button>
                 <button id="1H">1H</button>
@@ -42,27 +42,35 @@ include 'views/layouts/header.php';
     </div>
 
     <div class="swap-section">
-        <div class="swap-header">
-            <span>Buy</span>
-            <span>Settings (0.5%)</span>
+        <div>
+            <div class="swap-header">
+                <span>Buy/Sell</span>
+                <span>Settings (0.5%)</span>
+            </div>
+            <div class="swap-options">
+                <div class="swap-box">
+                    <div class="swap-input">
+                        <label for="amount">Montant</label>
+                        <div class="input-container">
+                            <span><?php echo htmlspecialchars($token['name']); ?></span>
+                            <input type="text" id="amount" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="position-selector">
+                        <label>Position</label>
+                        <div class="toggle-switch">
+                            <input type="radio" id="long" name="position" value="long" checked>
+                            <label for="long" class="toggle-label">Long</label>
+                            <input type="radio" id="short" name="position" value="short">
+                            <label for="short" class="toggle-label1">Short</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="swap-box">
-            <div class="swap-input">
-                <label>From</label>
-                <div class="input-container">
-                    <span>USDC</span>
-                    <input type="text" placeholder="0.00">
-                </div>
-            </div>
-            <div class="swap-arrow">↓</div>
-            <div class="swap-input">
-                <label>To</label>
-                <div class="input-container">
-                    <span><?php echo htmlspecialchars($token['name']) ?></span>
-                    <input type="text" placeholder="0.00">
-                </div>
-            </div>
-            <button class="swap-button">Swap</button>
+        <div class="action-buttons">
+            <button class="swap-button buy-button">Acheter</button>
+            <button class="swap-button sell-button">Vendre</button>
         </div>
     </div>
-</div>
