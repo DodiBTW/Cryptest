@@ -14,24 +14,18 @@ include 'views/layouts/header.php';
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Bitcoin</td>
-                <td>BTC</td>
-                <td>$43,000</td>
-                <td><a href="/?page="></a><button class="btn">Voir</button></td>
-            </tr>
-            <tr>
-                <td>Ethereum</td>
-                <td>ETH</td>
-                <td>$3,200</td>
-                <td><button class="btn">Voir</button></td>
-            </tr>
-            <tr>
-                <td>Solana</td>
-                <td>SOL</td>
-                <td>$120</td>
-                <td><button class="btn">Voir</button></td>
-            </tr>
+            <?php foreach ($tokens as $token): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($token['name']); ?></td>
+                    <td><?php echo htmlspecialchars($token['symbol']); ?></td>
+                    <td>$<?php echo htmlspecialchars($token['price']); ?></td>
+                    <td>
+                        <a href="/?page=<?php echo htmlspecialchars($token['name']); ?>">
+                            <button class="btn">Voir</button>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

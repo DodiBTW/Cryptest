@@ -16,7 +16,6 @@ while True:
         except json.JSONDecodeError:
             data = []
 
-        time.sleep(6)
         for token in tokens:
             
             uri = "https://api.dexscreener.com/latest/dex/tokens/"+ token[1]
@@ -45,3 +44,4 @@ while True:
 
             with open('db/prices.json', 'w') as output:
                 json.dump(data, output, indent=4)
+            time.sleep(60)

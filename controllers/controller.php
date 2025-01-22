@@ -1,35 +1,54 @@
 <?php
 require_once("./models/model.php");
 
-function DisplayHome(){
+function DisplayHome($id)
+{
     $model = new Model();
-    $currentPrice = $model->get_current_price(2);
-    $pricesChart = $model->get_all_prices(2);
+    $currentPrice = $model->get_current_price($id);
+    $pricesChart = $model->get_all_prices(20);
+    $token = $model->get_token_by_id($id);
+
+    $chartLabels = ["10:00", "11:00", "12:00", "13:00", "14:00"];
+    $chartValues = [100, 102, 101, 105, 110];
+
     require("./views/home.php");
 }
 
-function DisplayWallet(){
+function DisplayWallet()
+{
     $model = new Model();
-    if (!$model->check_login()){
+    if (!$model->check_login()) {
         echo "T Pa Laugine";
     } else {
         require("./views/wallet.php");
     }
 }
 
-function DisplayCrypto(){
+function DisplayCrypto()
+{
+    $model = new Model();
+    $tokens = $model->get_all_tokens();
+
+    foreach ($tokens as &$token) {
+        $currentPrice = $model->get_current_price($token['id']);
+        $token['price'] = $currentPrice['price'];
+    }
+    unset($token);
+
     require("./views/cryptocurrencies.php");
 }
 
 
-function DisplayLogin(){
+function DisplayLogin()
+{
     $model = new Model();
     $currentPrice = $model->get_current_price(2);
     $pricesChart = $model->get_all_prices(2);
     require("./views/home.php");
 }
 
-function Display404(){
+function Display404()
+{
     require("./views/404.php");
 }
 ?>
