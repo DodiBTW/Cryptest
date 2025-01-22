@@ -1,28 +1,36 @@
 <?php
 require("controllers/controller.php");
 
-$url = "$_SERVER[REQUEST_URI]";
+$url = $_SERVER['REQUEST_URI'];
 
 if (isset($_GET["page"]) && !empty($_GET["page"])) {
     $page = htmlspecialchars($_GET["page"]);
+    $option = isset($_GET["option"]) ? htmlspecialchars($_GET["option"]) : null;
 
     $model = new Model();
-    if ($model->get_token_by_name($page) != null) {
-        $tokenData = $model->get_token_by_name($page);
-        $token = htmlspecialchars($tokenData['id'], ENT_QUOTES, 'UTF-8');
-        DisplayHome($token);
+    $tokenData = $model->get_token_by_name($page);
 
-    } else if ($page == "home") {
-        DisplayHome(3);
-    } else if ($page == "login") {
+    if ($tokenData !== null) {
+        $token = htmlspecialchars($tokenData['id'], ENT_QUOTES, 'UTF-8');
+        if ($option > 5){
+            DisplayHome($token, $option); 
+        } else {
+            DisplayHome($token, 15);
+        }
+            
+    } elseif ($page == "home") {
+        DisplayHome(3, 15);
+    } elseif ($page == "login") {
         DisplayLogin();
-    } else if ($page == "wallet") {
+    } elseif ($page == "wallet") {
         DisplayWallet();
-    } else if ($page == "cryptocurrencies") {
+    } elseif ($page == "cryptocurrencies") {
         DisplayCrypto();
     } else {
         Display404();
     }
 } else {
-    DisplayHome(3);
+    $defaultOption = 15;
+    DisplayHome(3, $defaultOption);
 }
+?>

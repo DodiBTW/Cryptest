@@ -27,11 +27,11 @@ include 'views/layouts/header.php';
         <div class="chart-header">
             <span class="pair"><?php echo htmlspecialchars($token['name']) ?></span>
             <div class="time-options">
-                <button id="15m">15m</button>
-                <button id="1H">1H</button>
-                <button id="4H">4H</button>
-                <button id="1D">1D</button>
-                <button id="1W">1W</button>
+                <button id="15m"><a href="/?page=<?php echo htmlspecialchars($token['name'])?>&option=15">15m</a></button>
+                <button id="1H"><a href="/?page=<?php echo htmlspecialchars($token['name'])?>&option=60">1H</a></button>
+                <button id="4H"><a href="/?page=<?php echo htmlspecialchars($token['name'])?>&option=240">4H</a></button>
+                <button id="1D"><a href="/?page=<?php echo htmlspecialchars($token['name'])?>&option=1440">1D</a></button>
+                <button id="1W"><a href="/?page=<?php echo htmlspecialchars($token['name'])?>&option=10000">1W</a></button>
             </div>
         </div>
         <div class="chart">

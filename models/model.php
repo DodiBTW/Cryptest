@@ -188,8 +188,8 @@ class Model
         session_start();
         $user_id = $_SESSION['user'];
         $random_id = rand(100000, 999999);
-        $token_id = get_token_by_name($token_name)['id'];
-        $date = get_date_now();
+        $token_id = $this->get_token_by_name($token_name)['id'];
+        $date = $this->get_date_now();
         $transactions = $this->read_json_file($this->transactionsFile);
         $transactions[] = ['id' => $random_id, 'token_id' => $token_id, 'wallet_id' => $user_id, 'date' => $date, 'amount' => $amount, 'type' => $type];
         $this->write_json_file($this->transactionsFile, $transactions);
@@ -236,7 +236,7 @@ class Model
         session_start();
         $user_id = $_SESSION['user'];
         $balance = $this->get_wallet_balance();
-        $token = get_token_by_name($token_name);
+        $token = $this->get_token_by_name($token_name);
         $token_price = $token['price'];
         $token_id = $token['id'];
         $total_price = $amount * $token_price;
