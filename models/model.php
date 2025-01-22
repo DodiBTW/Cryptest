@@ -8,7 +8,7 @@ class Model
     private $transactionsFile = './db/transactions.json';
     private $usersFile = './db/users.json';
     private $balanceFile = './db/balance.json';
-    private function read_json_file($file) {
+    private function read_json_file(string $file): array {
         if (!file_exists($file)) {
             return [];
         }
@@ -16,16 +16,16 @@ class Model
         return json_decode($json, true);
     }
 
-    private function write_json_file($file, $data) {
+    private function write_json_file(string $file, array $data): void {
         $json = json_encode($data, JSON_PRETTY_PRINT);
         file_put_contents($file, $json);
     }
 
-    public function get_date_now(){
+    public function get_date_now(): string {
         return date('Y-m-d H:i:s');
     }
 
-    public function get_all_prices($limit= 50){
+    public function get_all_prices(int $limit = 50): array {
         $prices = $this->read_json_file($this->pricesFile);
         usort($prices, function($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
@@ -33,7 +33,7 @@ class Model
         return array_slice($prices, 0, $limit);
     }
 
-    public function get_prices_by_token_id($id, $limit=10){
+    public function get_prices_by_token_id(int $id, int $limit = 10): array {
         $prices = $this->read_json_file($this->pricesFile);
         $filtered = array_filter($prices, function($price) use ($id) {
             return $price['token_id'] == $id;
@@ -44,7 +44,7 @@ class Model
         return array_slice($filtered, 0, $limit);
     }
 
-    public function get_price_by_id($id){
+    public function get_price_by_id(int $id): ?array {
         $prices = $this->read_json_file($this->pricesFile);
         foreach ($prices as $price) {
             if ($price['id'] == $id) {
@@ -54,7 +54,7 @@ class Model
         return null;
     }
 
-    public function get_prices_by_date_range($start, $end){
+    public function get_prices_by_date_range(string $start, string $end): array {
         $prices = $this->read_json_file($this->pricesFile);
         $filtered = array_filter($prices, function($price) use ($start, $end) {
             return $price['date'] >= $start && $price['date'] <= $end;
@@ -65,11 +65,11 @@ class Model
         return $filtered;
     }
 
-    public function get_all_tokens(){
+    public function get_all_tokens(): array {
         return $this->read_json_file($this->tokensFile);
     }
 
-    public function get_token_by_id($id){
+    public function get_token_by_id(int $id): ?array {
         $tokens = $this->read_json_file($this->tokensFile);
         foreach ($tokens as $token) {
             if ($token['id'] == $id) {
@@ -79,7 +79,7 @@ class Model
         return null;
     }
 
-    public function get_token_by_name($name){
+    public function get_token_by_name(string $name): ?array {
         $tokens = $this->read_json_file($this->tokensFile);
         foreach ($tokens as $token) {
             if ($token['name'] == $name) {
@@ -89,11 +89,11 @@ class Model
         return null;
     }
 
-    public function get_transactions(){
+    public function get_transactions(): array {
         return $this->read_json_file($this->transactionsFile);
     }
 
-    public function get_transactions_by_token_id($id){
+    public function get_transactions_by_token_id(int $id): array {
         $transactions = $this->read_json_file($this->transactionsFile);
         $filtered = array_filter($transactions, function($transaction) use ($id) {
             return $transaction['token_id'] == $id;
@@ -101,7 +101,7 @@ class Model
         return $filtered;
     }
 
-    public function get_current_price($id){
+    public function get_current_price(int $id): ?array {
         $prices = $this->read_json_file($this->pricesFile);
         usort($prices, function($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
@@ -114,7 +114,7 @@ class Model
         return null;
     }
 
-    public function get_wallet_worth($user_id){
+    public function get_wallet_worth(int $user_id): array {
         $wallets = $this->read_json_file($this->walletsFile);
         $token_prices = [];
         foreach ($wallets as $wallet) {
@@ -132,7 +132,7 @@ class Model
         return $token_prices;
     }
 
-    public function get_token_wallet_amount($user_id, $token_id){
+    public function get_token_wallet_amount(int $user_id, int $token_id): ?float {
         $wallets = $this->read_json_file($this->walletsFile);
         foreach ($wallets as $wallet) {
             if ($wallet['user_id'] == $user_id) {
