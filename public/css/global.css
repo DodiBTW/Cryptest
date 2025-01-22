@@ -366,3 +366,12 @@ tr:hover {
 .btn:hover {
     background-color: #66bb6a;
 }
+
+a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}

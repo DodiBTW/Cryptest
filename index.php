@@ -12,7 +12,7 @@ if (isset($_GET["page"]) && !empty($_GET["page"])) {
 
     if ($tokenData !== null) {
         $token = htmlspecialchars($tokenData['id'], ENT_QUOTES, 'UTF-8');
-        if ($option > 5){
+        if ($option > 3){
             DisplayHome($token, $option); 
         } else {
             DisplayHome($token, 15);
