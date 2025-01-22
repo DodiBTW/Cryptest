@@ -205,13 +205,13 @@ class Model
         }
         return null;
     }
-    public function add_to_balance(){
+    public function add_to_balance($amount){
         session_start();
         $user_id = $_SESSION['user'];
         $balance = $this->read_json_file($this->balanceFile);
         foreach ($balance as $bal) {
             if ($bal['user_id'] == $user_id) {
-                $bal['balance'] += 1000;
+                $bal['balance'] += $amount;
                 $this->write_json_file($this->balanceFile, $balance);
                 return $bal['balance'];
             }
@@ -269,7 +269,9 @@ class Model
     public function sell_token($amount, $token_name){
         session_start();
         $user_id = $_SESSION['user'];
-        $token_price = get_token_by_name($token_name)['price'];
+        $token = get_token_by_name($token_name);
+        $token_price = $token['price'];
+        $token_id = $token['id'];
         $total_price = $amount * $token_price;
         $wallets = $this->read_json_file($this->walletsFile);
         foreach ($wallets as $wallet) {
