@@ -7,7 +7,7 @@ if (isset($_GET["page"]) && !empty($_GET["page"])) {
     $page = htmlspecialchars($_GET["page"]);
 
     $model = new Model();
-    if ($model->get_token_by_name($page)) {
+    if ($model->get_token_by_name($page) != null) {
         $tokenData = $model->get_token_by_name($page);
         $token = htmlspecialchars($tokenData['id'], ENT_QUOTES, 'UTF-8');
         DisplayHome($token);
