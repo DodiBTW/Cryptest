@@ -1,5 +1,6 @@
 <?php
-
+require_once('json_helper.php');
+require_once('wallet_helper.php');
 class UserHelper{
     private $usersFile = './db/users.json';
     
@@ -12,7 +13,8 @@ class UserHelper{
         return $_SESSION['user'];
     }
     public function login($username, $password){
-        $users = $this->read_json_file($this->usersFile);
+        $json_helper = new JsonHelper();
+        $users = $json_helper->read_json_file($this->usersFile);
         foreach ($users as $user) {
             if ($user['username'] == $username && password_verify($password, $user['hashed_password'])) {
                 session_start();
@@ -24,7 +26,9 @@ class UserHelper{
     }
 
     public function register($username, $password){
-        $users = $this->read_json_file($this->usersFile);
+        $json_helper = new JsonHelper();
+        $wallet_helper = new WalletHelper();
+        $users = $json_helper->read_json_file($this->usersFile);
         foreach ($users as $user) {
             if ($user['username'] == $username) {
                 return false;
@@ -32,8 +36,8 @@ class UserHelper{
         }
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $users[] = ['username' => $username, 'hashed_password' => $hashed_password];
-        $this->write_json_file($this->usersFile, $users);
-        $this->add_wallet_balance($username);
+        $json_helper->write_json_file($this->usersFile, $users);
+        $wallet_helper->add_wallet_balance($username);
         return true;
     }
     public function logout(){

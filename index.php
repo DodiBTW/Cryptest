@@ -1,6 +1,6 @@
 <?php
-require("controllers/controller.php");
-require("models/token_helper.php");
+require_once("controllers/controller.php");
+require_once("models/token_helper.php");
 $url = $_SERVER['REQUEST_URI'];
 
 if (isset($_GET["page"]) && !empty($_GET["page"])) {
