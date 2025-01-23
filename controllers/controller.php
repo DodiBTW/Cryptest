@@ -1,12 +1,15 @@
 <?php
-require_once("./models/model.php");
-
+require_once("./models/price_helper.php");
+require_once("./models/wallet_helper.php");
+require_once("./models/token_helper.php");
+require_once("./models/user_helper.php");
 function DisplayHome($id,$limit)
 {
-    $model = new Model();
-    $currentPrice = $model->get_current_price($id);
-    $pricesChart = $model->get_prices_by_token_id($id);
-    $token = $model->get_token_by_id($id);
+    $price_helper = new PriceHelper();
+    $token_helper = new TokenHelper();
+    $currentPrice = $price_helper->get_current_price($id);
+    $pricesChart = $price_helper->get_prices_by_token_id($id);
+    $token = $token_helper->get_token_by_id($id);
 
     $labels = [];
     $values = []; 
@@ -34,8 +37,8 @@ function DisplayHome($id,$limit)
 
 function DisplayWallet()
 {
-    $model = new Model();
-    if (!$model->check_login()) {
+    $user_helper = new UserHelper();
+    if (!$user_helper->check_login()) {
         echo "Vous devez être connecté";
     } else {
         require("./views/wallet.php");
@@ -44,11 +47,12 @@ function DisplayWallet()
 
 function DisplayCrypto()
 {
-    $model = new Model();
-    $tokens = $model->get_all_tokens();
+    $price_helper = new PriceHelper();
+    $token_helper = new TokenHelper();
+    $tokens = $token_helper->get_all_tokens();
 
     foreach ($tokens as &$token) {
-        $currentPrice = $model->get_current_price($token['id']);
+        $currentPrice = $price_helper->get_current_price($token['id']);
         $token['price'] = $currentPrice['price'];
     }
     unset($token);
@@ -59,9 +63,9 @@ function DisplayCrypto()
 
 function DisplayLogin()
 {
-    $model = new Model();
-    $currentPrice = $model->get_current_price(2);
-    $pricesChart = $model->get_all_prices(2);
+    $price_helper = new PriceHelper();
+    $currentPrice = $price_helper->get_current_price(2);
+    $pricesChart = $price_helper->get_all_prices(2);
     require("./views/home.php");
 }
 
