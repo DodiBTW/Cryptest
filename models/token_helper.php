@@ -1,7 +1,6 @@
 <?php
 require_once 'json_helper.php';
 require_once 'wallet_helper.php';
-require_once 'token_helper.php';
 require_once 'balance_helper.php';
 require_once 'transaction_helper.php';
 class TokenHelper{
