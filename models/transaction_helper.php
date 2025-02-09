@@ -21,7 +21,7 @@ class TransactionHelper{
         });
         return $filtered;
     }
-    private function add_transaction($token_name, $type, $amount){
+    private function add_transaction($token_name, $type, $amount): void{
         $json_helper = new JsonHelper();
         $token_helper = new TokenHelper();
         session_start();
