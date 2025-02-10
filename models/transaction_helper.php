@@ -10,7 +10,7 @@ class TransactionHelper{
 
     public function get_transactions(): array {
         $json_helper = new JsonHelper();
-        return $json_helper->read_json_file($this->transactionsFile);
+        return $json_helper->read_json_file($this->transactionsFile) ?? [];
     }
 
     public function get_transactions_by_token_id(int $id): array {
@@ -21,16 +21,33 @@ class TransactionHelper{
         });
         return $filtered;
     }
-    private function add_transaction($token_name, $type, $amount): void{
+
+    private function add_transaction($token_name, $type, $amount): bool{
         $json_helper = new JsonHelper();
         $token_helper = new TokenHelper();
+        $price_helper = new PriceHelper();
         session_start();
         $user_id = $_SESSION['user'];
+        if(!$user_id) {
+            return false;
+        }
         $random_id = rand(100000, 999999);
-        $token_id = $token_helper->get_token_by_name($token_name)['id'];
+        $token = $token_helper->get_token_by_name($token_name);
+        if (!$token) {
+            return false;
+        }
+        $token_id = $token['id'];
+        $token_price = $price_helper->get_current_price($token_id);
+        if(!$token_price) {
+            return false;
+        }
         $date = $this->get_date_now();
         $transactions = $json_helper->read_json_file($this->transactionsFile);
-        $transactions[] = ['id' => $random_id, 'token_id' => $token_id, 'wallet_id' => $user_id, 'date' => $date, 'amount' => $amount, 'type' => $type];
+        if(!$transactions) {
+            $transactions = [];
+        }
+        $transactions[] = ['id' => $random_id, 'token_id' => $token_id, 'wallet_id' => $user_id, 'date' => $date, 'amount' => $amount, 'buy_price' => $token_price, 'type' => $type];
         $json_helper->write_json_file($this->transactionsFile, $transactions);
+        return true;
     }
 }
