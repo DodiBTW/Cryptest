@@ -41,7 +41,7 @@ include 'views/layouts/header.php';
         </div>
     </div>
 
-    <div class="swap-section">
+    <form action="/?page=transaction" method="POST" class="swap-section">
         <div>
             <div class="swap-header">
                 <span>Buy/Sell</span>
@@ -49,28 +49,19 @@ include 'views/layouts/header.php';
             </div>
             <div class="swap-options">
                 <div class="swap-box">
-                    <div class="swap-input">
+                     <div class="swap-input">
                         <label for="amount">Montant</label>
                         <div class="input-container">
                             <span><?php echo htmlspecialchars($token['name']); ?></span>
-                            <input type="text" id="amount" placeholder="0.00">
-                        </div>
-                    </div>
-
-                    <div class="position-selector">
-                        <label>Position</label>
-                        <div class="toggle-switch">
-                            <input type="radio" id="long" name="position" value="long" checked>
-                            <label for="long" class="toggle-label">Long</label>
-                            <input type="radio" id="short" name="position" value="short">
-                            <label for="short" class="toggle-label1">Short</label>
+                            <input type="number" id="amount" name="amount" placeholder="0.00">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <input type="text" value="<?php echo htmlspecialchars($token['name']); ?>" name="name" class="invisibleInput">
         <div class="action-buttons">
-            <button class="swap-button buy-button">Acheter</button>
-            <button class="swap-button sell-button">Vendre</button>
+            <button class="swap-button buy-button" type="submit" name="action" value="buy">Acheter</button>
+            <button class="swap-button sell-button" type="submit" name="action" value="sell">Vendre</button>
         </div>
-    </div>
+    </form>

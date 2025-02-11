@@ -34,16 +34,83 @@ function DisplayHome($id,$limit)
 
     require("./views/home.php");
 }
+function HandleLogin()
+{
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+
+        $user_helper = new UserHelper();
+        if ($user_helper->login($username, $password)) {
+            require("./views/wallet.php");
+            $balance_helper = new BalanceHelper();
+            $user_helper = new UserHelper();
+
+            $user_id = $user_helper->get_user_id();
+            if ($balance_helper->get_wallet_balance() < 10){
+                $balance_helper->add_wallet_balance($user_id);
+            }
+            exit;
+        } else {
+            $error = "Identifiants incorrects";
+        }
+    }
+
+    require("./views/login.php");
+}
+
+function HandleTransaction()
+{
+    $user_helper = new UserHelper();
+    if ($user_helper->check_login()) {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $amount = $_POST['amount'] ?? '';
+            $action = $_POST['action'] ?? '';
+    
+            $token_helper = new TokenHelper();
+            if ($amount != 0 && $action = "buy") {
+                $token_helper->buy_token($amount, "solana" );
+            };
+        }
+        
+        // header("Location: /?page=Solana&option=15");
+    } else {
+        require("./views/login.php");
+      
+    }
+    
+}
+
+function HandleRegister()
+{
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        $user_helper = new UserHelper();
+        if ($user_helper->register($username, $password)) {
+            header("Location: /?page=login"); // Redirige vers la page de connexion après inscription
+            exit;
+        } else {
+            $error = "Ce nom d'utilisateur est déjà pris.";
+        }
+    }
+
+    require("./views/register.php");
+}
 
 function DisplayWallet()
 {
     $user_helper = new UserHelper();
     if (!$user_helper->check_login()) {
-        echo "Vous devez être connecté";
+        HandleLogin();
     } else {
         require("./views/wallet.php");
     }
 }
+
+
 
 function DisplayCrypto()
 {
@@ -53,20 +120,23 @@ function DisplayCrypto()
 
     foreach ($tokens as &$token) {
         $currentPrice = $price_helper->get_current_price($token['id']);
-        $token['price'] = $currentPrice['price'];
+        $token['price'] = $currentPrice ? $currentPrice['price'] : 'N/A'; 
+        
     }
+    
     unset($token);
-
+    
     require("./views/cryptocurrencies.php");
 }
 
-
 function DisplayLogin()
 {
-    $price_helper = new PriceHelper();
-    $currentPrice = $price_helper->get_current_price(2);
-    $pricesChart = $price_helper->get_all_prices(2);
-    require("./views/home.php");
+    require('./views/login.php');
+}
+
+function DisplayRegister()
+{
+    require('./views/register.php');
 }
 
 function Display404()

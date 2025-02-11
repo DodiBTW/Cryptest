@@ -22,11 +22,14 @@ class TransactionHelper{
         return $filtered;
     }
 
-    private function add_transaction($token_name, $type, $amount): bool{
+    public function add_transaction($token_name, $type, $amount): bool{
         $json_helper = new JsonHelper();
         $token_helper = new TokenHelper();
         $price_helper = new PriceHelper();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $user_id = $_SESSION['user'];
         if(!$user_id) {
             return false;

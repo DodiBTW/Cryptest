@@ -22,6 +22,7 @@ class TokenHelper{
         }
         return null;
     }
+    
     public function get_token_by_name(string $name): ?array {
         $json_helper = new JsonHelper();
         $tokens = $json_helper->read_json_file($this->tokensFile);
@@ -34,21 +35,28 @@ class TokenHelper{
     }
 
     public function buy_token($amount, $token_name){
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $json_helper = new JsonHelper();
         $balance_helper = new BalanceHelper();
+        $price_helper = new PriceHelper();
         $wallet_helper = new WalletHelper();
         $token_helper = new TokenHelper();
         $transaction_helper = new TransactionHelper();
-        $user_id = $_SESSION['user'];
-        $balance = $wallet_helper->get_wallet_balance();
-        $token = $token_helper->get_token_by_name($token_name);
-        $token_price = $token['price'];
+        $user_helper = new UserHelper();
+        $user_id = (int)$user_helper->get_user_id();
+        $balance = $balance_helper->get_wallet_balance();
+        $token = $token_helper->get_token_by_name(ucfirst($token_name));
+        $token_price = $price_helper->get_current_price($token['id'])['price'];;
         $token_id = $token['id'];
         $total_price = $amount * $token_price;
+        var_dump($total_price);
         if ($balance < $total_price) {
             return false;
         }
+        var_dump($balance);
         $wallets = $json_helper->read_json_file($this->walletsFile);
         $found = false;
         foreach ($wallets as $wallet) {
@@ -67,12 +75,17 @@ class TokenHelper{
             }
             break;
         }
+        var_dump("3");
         $json_helper->write_json_file($this->walletsFile, $wallets);
         $balance_helper->withdraw_from_balance($total_price);
         $transaction_helper->add_transaction($token_name, 'buy', $amount);
         return true;
     }
     public function sell_token($amount, $token_name){
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $json_helper = new JsonHelper();
         $balance_helper = new BalanceHelper();
         $wallet_helper = new WalletHelper();

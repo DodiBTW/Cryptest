@@ -12,24 +12,28 @@ class PriceHelper{
         return array_slice($prices, 0, $limit);
     }
 
-    public function get_current_price(int $id): ?float {
+    public function get_current_price(int $id): ?array {
         $json_helper = new JsonHelper();
         $prices = $json_helper->read_json_file($this->pricesFile);
+    
         usort($prices, function($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
-        // foreach ($prices as $price) {
-        //     if ($price['token_id'] == $id) {
-        //         return $price;
-        //     }
-        // }
-        // return null;
-        // Make it more functionnal
+    
         $token_prices = array_filter($prices, function($price) use ($id) {
             return $price['token_id'] == $id;
         });
-        return $token_prices[0] ?? null;
+    
+        $token_prices = array_values($token_prices);
+        
+        if (!empty($token_prices)) {
+            return $token_prices[0];
+        } else {
+            error_log("No price found for token ID: $id");
+            return null;
+        }
     }
+    
 
     public function get_prices_by_token_id(int $id, int $limit = 10): array {
         $json_helper = new JsonHelper();

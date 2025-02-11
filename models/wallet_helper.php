@@ -5,9 +5,9 @@ class WalletHelper{
     private $walletsFile = './db/wallets.json';
 
     public function get_wallet_tokens(int $user_id): array {
-        // Returns all tokens in a user's wallet with user_id, token_id, and amount
 
         $json_helper = new JsonHelper();
+        $token_helper = new TokenHelper();
         $wallets = $json_helper->read_json_file($this->walletsFile);
         $user_wallets = array_filter($wallets, function($wallet) use ($user_id) {
             return $wallet['user_id'] == $user_id;
@@ -25,16 +25,19 @@ class WalletHelper{
         return $tokens;
     }
     public function get_wallet_worth(int $user_id):float{
+        $balance_helper = new BalanceHelper();
+        $balance = $balance_helper->get_wallet_balance();
         $user_tokens = $this->get_wallet_tokens($user_id);
         $price_helper = new PriceHelper();
         $worth = 0;
         array_map(function($token) use ($price_helper, &$worth){
-            $worth += $price_helper->get_token_price($token['token_id']) * $token['amount'];
+            $worth += $price_helper->get_current_price($token['token_id']) * $token['amount'];
         }, $user_tokens);
-        return $worth;
+        return $worth+$balance;
     }
     public function get_token_wallet_amount(int $user_id, int $token_id): ?float {
-        $wallets = $this->read_json_file($this->walletsFile);
+        $json_helper = new JsonHelper();
+        $wallets = $json_helper->read_json_file($this->walletsFile);
         $this->get_wallet_tokens($user_id);
         $filtered = array_filter($wallets, function($wallet) use ($user_id, $token_id) {
             $wallet['token_id'] == $token_id;

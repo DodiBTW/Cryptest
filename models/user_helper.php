@@ -9,12 +9,19 @@ class UserHelper{
         return isset($_SESSION['user']);
     }
     public function get_user_id() : ?string {
-        session_start();
-        if (!isset($_SESSION['user'])) {
-            return null;
+        $username = $_SESSION['user'];
+        $json_helper = new JsonHelper();
+        $users = $json_helper->read_json_file($this->usersFile);
+    
+        foreach ($users as $user) {
+            if ($user['username'] === $username) {
+                return $user['id'];
+            }
         }
-        return $_SESSION['user'];
+    
+        return null;
     }
+    
     public function login($username, $password) : bool {
         $json_helper = new JsonHelper();
         $users = $json_helper->read_json_file($this->usersFile);
@@ -40,10 +47,9 @@ class UserHelper{
             return false;
         }
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $id = uniqid();
+        $id = time();
         $users[] = ['id' => $id, 'username' => $username, 'hashed_password' => $hashed_password];
         $json_helper->write_json_file($this->usersFile, $users);
-        $wallet_helper->add_wallet_balance($username);
         return true;
     }
     public function logout(){

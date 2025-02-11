@@ -20,11 +20,19 @@ if (isset($_GET["page"]) && !empty($_GET["page"])) {
     } elseif ($page == "home") {
         DisplayHome(3, 15);
     } elseif ($page == "login") {
-        DisplayLogin();
+        HandleLogin();
     } elseif ($page == "wallet") {
         DisplayWallet();
     } elseif ($page == "cryptocurrencies") {
         DisplayCrypto();
+    } elseif ($page == "register") {
+        HandleRegister();
+    } elseif ($page == "transaction") {
+        HandleTransaction();
+    } elseif ($page == "logout") {
+        $user_helper = new UserHelper;
+        $user_helper->logout();
+        DisplayHome(3,15);
     } else {
         Display404();
     }
