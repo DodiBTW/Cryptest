@@ -34,7 +34,7 @@ class TokenHelper{
         return null;
     }
 
-    public function buy_token($amount, $token_name){
+    public function buy_token($amount, $token_name) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -42,45 +42,59 @@ class TokenHelper{
         $json_helper = new JsonHelper();
         $balance_helper = new BalanceHelper();
         $price_helper = new PriceHelper();
-        $wallet_helper = new WalletHelper();
         $token_helper = new TokenHelper();
         $transaction_helper = new TransactionHelper();
         $user_helper = new UserHelper();
+        
         $user_id = (int)$user_helper->get_user_id();
+        if (!$user_id) {
+            return false;
+        }
+    
         $balance = $balance_helper->get_wallet_balance();
         $token = $token_helper->get_token_by_name(ucfirst($token_name));
-        $token_price = $price_helper->get_current_price($token['id'])['price'];;
+    
+        if (!$token) {
+            return false;
+        }
+    
+        $token_price = $price_helper->get_current_price($token['id'])['price'];
         $token_id = $token['id'];
         $total_price = $amount * $token_price;
-        var_dump($total_price);
+    
         if ($balance < $total_price) {
             return false;
         }
-        var_dump($balance);
+    
         $wallets = $json_helper->read_json_file($this->walletsFile);
         $found = false;
-        foreach ($wallets as $wallet) {
-            if ($wallet['user_id'] != $user_id) {
-                continue;
-            }
-            foreach ($wallet['tokens'] as $token) {
-                if ($token['token_id'] == $token_id) {
-                    $token['amount'] += $amount;
+    
+        foreach ($wallets as &$wallet) {
+            if ($wallet['user_id'] == $user_id) {
+                if ($wallet['token_id'] == $token_id) {
+                    $wallet['amount'] += $amount;
                     $found = true;
                     break;
                 }
+    
             }
-            if (!$found) {
-                $wallet['tokens'][] = ['token_id' => $token_id, 'amount' => $amount];
-            }
-            break;
         }
-        var_dump("3");
+    
+        if (!$found) {
+            $wallets[] = [
+                'user_id' => $user_id,
+                'token_id' => $token_id,
+                 'amount' => $amount
+                ];
+        }
+    
         $json_helper->write_json_file($this->walletsFile, $wallets);
         $balance_helper->withdraw_from_balance($total_price);
         $transaction_helper->add_transaction($token_name, 'buy', $amount);
+    
         return true;
     }
+    
     public function sell_token($amount, $token_name){
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -90,21 +104,23 @@ class TokenHelper{
         $balance_helper = new BalanceHelper();
         $wallet_helper = new WalletHelper();
         $token_helper = new TokenHelper();
+        $price_helper = new PriceHelper();
+        $user_helper = new UserHelper();
         $transaction_helper = new TransactionHelper();
-        session_start();
-        $user_id = $_SESSION['user'];
-        $token = $this->get_token_by_name($token_name);
-        $token_price = $token['price'];
-        $token_id = $token['id'];
+
+        $user_id = (int)$user_helper->get_user_id();
+        $token = $this->get_token_by_name(ucfirst($token_name))['id'];
+        var_dump($token);
+
+        $token_price = $price_helper->get_current_price($token)['price'];
+        $token_id = $token;
         $total_price = $amount * $token_price;
+        
         $wallets = $json_helper->read_json_file($this->walletsFile);
-        foreach ($wallets as $wallet) {
-            if ($wallet['user_id'] != $user_id) {
-                continue;
-            }
-            foreach ($wallet['tokens'] as $token) {
-                if ($token['token_id'] == $token_id && $token['amount'] >= $amount) {
-                    $token['amount'] -= $amount;
+        foreach ($wallets as &$wallet) {
+            if ($wallet['user_id'] == $user_id) {
+                if ($wallet['token_id'] == $token_id && $wallet['amount'] >= $amount) {
+                    $wallet['amount'] -= $amount;
                     $balance_helper->add_to_balance($total_price);
                     $json_helper->write_json_file($this->walletsFile, $wallets);
                     $transaction_helper->add_transaction($token_name, 'sell', $amount);

@@ -47,13 +47,16 @@ include 'views/layouts/header.php';
                 <span>Buy/Sell</span>
                 <span>Settings (0.5%)</span>
             </div>
+            <?php if (!empty($error)) : ?>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
+            <?php endif; ?>
             <div class="swap-options">
                 <div class="swap-box">
                      <div class="swap-input">
                         <label for="amount">Montant</label>
                         <div class="input-container">
                             <span><?php echo htmlspecialchars($token['name']); ?></span>
-                            <input type="number" id="amount" name="amount" placeholder="0.00">
+                            <input type="float" id="amount" name="amount" placeholder="0.00">
                         </div>
                     </div>
                 </div>

@@ -5,8 +5,9 @@ include 'views/layouts/header.php';
 $user_helper = new UserHelper();
 $wallet_helper = new WalletHelper();
 $balance_helper = new BalanceHelper();
+$price_helper = new PriceHelper();
+$token_helper = new TokenHelper();
 
-// Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
     header("Location: /?page=login");
     exit;
@@ -22,7 +23,7 @@ $tokens = $wallet_helper->get_wallet_tokens($id);
     <h2>Mon Wallet</h2>
 
     <div class="wallet-balance">
-        <p>💰 Solde total : <span><?= number_format($balance, 2) ?> €</span></p>
+        <p>💰 Solde restant à investir : <span><?= number_format($balance, 2) ?> €</span></p>
     </div>
 
     <h3>Mes Placements</h3>
@@ -43,7 +44,7 @@ $tokens = $wallet_helper->get_wallet_tokens($id);
                     <td><?= htmlspecialchars($token['symbol']) ?></td>
                     <td><?= htmlspecialchars($token['address']) ?></td>
                     <td><?= number_format($token['amount'], 4) ?></td>
-                    <td><?= number_format($token['amount'] * $token['value'], 2) ?> €</td>
+                    <td><?= number_format($token['amount'] * $price_helper->get_current_price($token_helper->get_token_by_name($token['name'])['id'])['price']) ?> €</td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

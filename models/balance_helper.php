@@ -30,10 +30,13 @@ class BalanceHelper{
     }
     public function add_to_balance($amount){
         $json_helper = new JsonHelper();
-        session_start();
-        $user_id = $_SESSION['user'];
+        $user_helper = new UserHelper();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $user_id = $user_helper->get_user_id();
         $balance = $json_helper->read_json_file($this->balanceFile);
-        foreach ($balance as $bal) {
+        foreach ($balance as &$bal) {
             if ($bal['user_id'] == $user_id) {
                 $bal['balance'] += $amount;
                 $json_helper->write_json_file($this->balanceFile, $balance);
@@ -44,13 +47,14 @@ class BalanceHelper{
     }
     public function withdraw_from_balance($amount){
         $json_helper = new JsonHelper();
+        $user_helper = new UserHelper();
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        $user_id = $_SESSION['user'];
+        $user_id = $user_helper->get_user_id();
         $balance = $json_helper->read_json_file($this->balanceFile);
-        foreach ($balance as $bal) {
+        foreach ($balance as &$bal) {
             if ($bal['user_id'] != $user_id) {
                 continue;
             }
